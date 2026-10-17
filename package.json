@@ -1,0 +1,10 @@
+{
+  "name": "moy-lichnyy-koshelek",
+  "version": "1.0.0",
+  "description": "Мой личный кошелёк: учёт доходов и расходов",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/"
+  }
+}

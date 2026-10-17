@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мой личный кошелёк</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>Мой личный кошелёк</header>
+<main>
+  <section class="balance" aria-label="Остаток">
+    <div class="label">Остаток</div>
+    <div class="sum" id="balance">0 ₽</div>
+  </section>
+
+  <section class="card">
+    <h2>Новая операция</h2>
+    <form id="form" novalidate>
+      <div class="row">
+        <div class="field">
+          <label class="t" for="amount">Сумма, ₽</label>
+          <input type="number" id="amount" name="amount" min="1" step="1" placeholder="1500" autocomplete="off">
+          <div class="hint" id="amount-hint">Целое число от 1</div>
+          <div class="errmsg" id="amount-error" role="alert" hidden></div>
+        </div>
+        <div class="field">
+          <span class="t">Тип</span>
+          <div class="seg">
+            <input type="radio" name="type" id="type-income" value="income">
+            <label for="type-income">Доход</label>
+            <input type="radio" name="type" id="type-expense" value="expense" checked>
+            <label for="type-expense">Расход</label>
+          </div>
+        </div>
+      </div>
+      <div class="field wide">
+        <label class="t" for="label">На что деньги</label>
+        <input type="text" id="label" name="label" placeholder="Например, продукты" autocomplete="off">
+        <div class="errmsg" id="label-error" role="alert" hidden></div>
+      </div>
+      <button type="submit" id="submit">Добавить</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Операции</h2>
+    <div class="empty" id="empty"><b>Операций пока нет</b>Добавьте первую операцию — доход или расход, и она появится здесь.</div>
+    <ul id="list" hidden></ul>
+  </section>
+</main>
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
