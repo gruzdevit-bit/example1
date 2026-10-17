@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мой личный кошелёк</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top-bar">
+  <div class="logo">Мой личный кошелёк</div>
+  <nav aria-label="Разделы">
+    <a href="#wallet">Кошелёк</a>
+    <a href="#calendar">Календарь</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="wallet">
+    <div class="card bal">
+      <div class="bal-label">Остаток</div>
+      <div class="bal-value" id="balance">0 ₽</div>
+    </div>
+
+    <div class="card">
+      <h2>Новая операция</h2>
+      <form id="op-form" novalidate>
+        <div class="row">
+          <div class="col">
+            <label class="lbl" for="op-amount">Сумма, ₽</label>
+            <input class="inp" id="op-amount" type="text" inputmode="numeric" placeholder="1500" autocomplete="off">
+            <div class="hint">Целое число от 1</div>
+          </div>
+          <div class="col">
+            <div class="lbl" id="op-type-label">Тип</div>
+            <div class="seg" role="radiogroup" aria-labelledby="op-type-label">
+              <label><input type="radio" name="op-type" value="income"><span>Доход</span></label>
+              <label><input type="radio" name="op-type" value="expense" checked><span>Расход</span></label>
+            </div>
+          </div>
+        </div>
+        <label class="lbl gap" for="op-title">На что деньги</label>
+        <input class="inp" id="op-title" type="text" placeholder="Например, продукты" autocomplete="off">
+        <div class="error" id="op-error" role="alert"></div>
+        <button class="btn" type="submit">Добавить</button>
+      </form>
+    </div>
+
+    <div class="card" id="operations">
+      <h2>Операции</h2>
+      <div id="op-list"></div>
+    </div>
+  </section>
+
+  <section id="calendar" class="card">
+    <h2>Календарь</h2>
+    <div class="cal-top">
+      <h3 id="cal-title" class="cal-title"></h3>
+      <div class="ctl">
+        <button type="button" class="sq text" id="cal-today">Сегодня</button>
+        <button type="button" class="sq" id="cal-prev" aria-label="назад">назад</button>
+        <button type="button" class="sq" id="cal-next" aria-label="вперёд">вперёд</button>
+      </div>
+    </div>
+    <div class="wd" aria-hidden="true"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div>
+    <div class="grid" id="cal-grid"></div>
+
+    <div class="day">
+      <div class="day-top">
+        <h3 id="day-title">Дела</h3>
+        <span class="cnt" id="day-count"></span>
+      </div>
+      <ul class="tasks" id="day-list"></ul>
+      <div class="empty" id="day-empty" hidden><b>На этот день дел нет</b></div>
+    </div>
+
+    <form id="task-form" class="task-form" novalidate>
+      <h3>Добавить дело</h3>
+      <label class="lbl" for="task-title">Что планируете</label>
+      <input class="inp" id="task-title" type="text" placeholder="Например, позвонить в банк" autocomplete="off">
+      <div class="hint">До 60 символов</div>
+      <div class="error" id="task-error" role="alert"></div>
+      <button class="btn" type="submit">Добавить дело</button>
+    </form>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
