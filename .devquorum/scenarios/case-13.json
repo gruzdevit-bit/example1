@@ -1,0 +1,20 @@
+{
+  "case": 13,
+  "title": "Создать пользователя и назначить ему роль Р1",
+  "steps": [
+    {"open": "/login"},
+    {"select": "#user_id", "value": "1"},
+    {"click": "#login-submit"},
+    {"open": "/users"},
+    {"fill": "#full_name", "value": "Новый Сотрудник"},
+    {"fill": "#email", "value": "new@example.com"},
+    {"click": "#create-user"},
+    {"expect_text": "Пользователь создан."},
+    {"expect_text": "Новый Сотрудник"},
+    {"check": "#user-6-role-1"},
+    {"click": "#assign-6"},
+    {"expect_text": "Роли пользователя сохранены."},
+    {"open": "/substitutions/new"},
+    {"expect_text": "Новый Сотрудник"}
+  ]
+}

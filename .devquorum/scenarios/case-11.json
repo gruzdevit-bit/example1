@@ -1,0 +1,17 @@
+{
+  "case": 11,
+  "title": "Дата окончания раньше даты начала — сохранение заблокировано",
+  "steps": [
+    {"open": "/login"},
+    {"select": "#user_id", "value": "1"},
+    {"click": "#login-submit"},
+    {"open": "/substitutions/new"},
+    {"fill": "#date_from", "value": "2025-07-15"},
+    {"fill": "#date_to", "value": "2025-07-01"},
+    {"check": "#role_1"},
+    {"check": "#deputy_1_2"},
+    {"click": "#submit-substitution"},
+    {"expect_text": "Дата окончания не может быть раньше даты начала."},
+    {"expect_no_text": "Замещение сохранено."}
+  ]
+}

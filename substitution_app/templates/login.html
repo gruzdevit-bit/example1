@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Вход — Замещения{% endblock %}
+{% block content %}
+<div class="card pad login-card">
+  <h1>Вход в систему</h1>
+  <p class="hint">Выберите текущего пользователя. Пароль на стенде не требуется.</p>
+  {% if current_user %}
+    <p class="note">Вы вошли как {{ current_user.full_name }}. Можно переключиться на другого пользователя.</p>
+  {% endif %}
+  <form method="post" action="/login" class="form-section" style="margin-top:16px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label class="field">Текущий пользователь
+      <select name="user_id" id="user_id" required>
+        {% for user in users %}
+          <option value="{{ user.id }}" {% if current_user and current_user.id == user.id %}selected{% endif %}>{{ user.full_name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <div class="actions">
+      <span class="hint">Пользователи заводятся на странице «Пользователи».</span>
+      <button type="submit" class="btn primary" id="login-submit">Войти</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

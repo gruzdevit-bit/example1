@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Мои замещения{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Мои замещения</h1>
+    <p class="hint">Передайте свои роли коллегам на период отсутствия — по одной или нескольким сразу.</p>
+  </div>
+  <a class="btn primary" href="/substitutions/new">+ Настроить замещение</a>
+</div>
+
+{% if flash %}<div class="flash">{{ flash }}</div>{% endif %}
+
+<div class="card summary">
+  <div class="summary-item"><span class="lbl">Всего строк</span><b>{{ total_substitutions }}</b></div>
+  <div class="summary-item"><span class="lbl">Активно</span><b>{{ counts.active }}</b></div>
+  <div class="summary-item"><span class="lbl">Запланировано</span><b>{{ counts.planned }}</b></div>
+  <div class="summary-item"><span class="lbl">Завершено</span><b>{{ counts.completed }}</b></div>
+  <div class="summary-item"><span class="lbl">Отозвано</span><b>{{ counts.revoked }}</b></div>
+</div>
+
+<div class="section-title">
+  <h2>Мои роли</h2>
+  <span class="hint">Переданные роли на период недоступны владельцу.</span>
+</div>
+<div class="card">
+  {% for role in roles %}
+    <div class="role-row">
+      <div class="role-info">
+        <div class="role">{{ role.name }}</div>
+        <div class="role-note">{{ role.description }}</div>
+      </div>
+      {% if role.transferred %}
+        <span class="badge unavailable">недоступна</span>
+      {% else %}
+        <span class="badge available">доступна</span>
+      {% endif %}
+      {% if role.id in revocable_role_ids %}
+        <form method="post" action="/roles/{{ role.id }}/revoke" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="btn ghost red" id="revoke-role-{{ role.id }}">Отозвать роль целиком</button>
+        </form>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="empty">У вас пока нет ролей.</div>
+  {% endfor %}
+</div>
+
+<div class="toolbar" style="margin-top:22px">
+  <div class="tabs">
+    {% for key, label in filters.items() %}
+      <a class="tab {% if filter_key == key %}active{% endif %}" href="/substitutions?status={{ key }}">
+        {{ label }}{% if key != 'all' %}<b>{{ counts[key] }}</b>{% endif %}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Роль</th><th>Заместитель</th><th>Период</th><th>Статус</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for item in substitutions %}
+        <tr>
+          <td>
+            <div class="role">{{ item.role_name }}</div>
+            <div class="role-note">{{ item.role_description }}</div>
+          </td>
+          <td>{{ item.deputy_name }}</td>
+          <td>{{ format_date(item.date_from) }} — {{ format_date(item.date_to) }}</td>
+          <td>
+            <span class="badge {{ status_class(item.status) }}">{{ item.status }}</span>
+            {% if item.status == 'отозвано' %}<div class="role-note">отозвано {{ format_date(item.revoked_at) }}</div>{% endif %}
+          </td>
+          <td class="ta-r">
+            <a class="btn ghost" href="/substitutions/{{ item.id }}">Подробнее</a>
+            {% if item.status in ('запланировано', 'активно') %}
+              <form method="post" action="/substitutions/{{ item.id }}/revoke" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="btn ghost red" id="revoke-sub-{{ item.id }}">Отозвать</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="empty">Замещений пока нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="foot-actions">
+  <form method="post" action="/substitutions/revoke-all" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="btn danger" id="revoke-all">Отозвать все замещения</button>
+  </form>
+  <span class="hint">Все переданные роли вернутся к вам сразу после отзыва.</span>
+</div>
+
+<div class="section-title">
+  <h2>Роли, переданные мне</h2>
+  <a class="btn ghost" href="/delegated">Открыть отдельно</a>
+</div>
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Роль</th><th>Владелец</th><th>Период</th><th>Статус</th><th>Доступ</th></tr>
+    </thead>
+    <tbody>
+      {% for item in delegated %}
+        <tr>
+          <td>
+            <div class="role">{{ item.role_name }}</div>
+            <div class="role-note">{{ item.role_description }}</div>
+          </td>
+          <td>{{ item.owner_name }}</td>
+          <td>{{ format_date(item.date_from) }} — {{ format_date(item.date_to) }}</td>
+          <td><span class="badge {{ status_class(item.status) }}">{{ item.status }}</span></td>
+          <td>
+            {% if item.available %}
+              <span class="badge available">доступна</span>
+            {% else %}
+              <span class="badge unavailable">недоступна</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="empty">Вам пока не передавали роли.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

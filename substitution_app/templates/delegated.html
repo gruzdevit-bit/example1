@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Я замещаю{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Роли, переданные мне</h1>
+    <p class="hint">Роли коллег, которые доступны вам в период замещения. Вне периода доступ отсутствует.</p>
+  </div>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Роль</th><th>Владелец</th><th>Период</th><th>Статус</th><th>Доступ</th></tr>
+    </thead>
+    <tbody>
+      {% for item in delegated %}
+        <tr>
+          <td>
+            <div class="role">{{ item.role_name }}</div>
+            <div class="role-note">{{ item.role_description }}</div>
+          </td>
+          <td>{{ item.owner_name }}</td>
+          <td>{{ format_date(item.date_from) }} — {{ format_date(item.date_to) }}</td>
+          <td><span class="badge {{ status_class(item.status) }}">{{ item.status }}</span></td>
+          <td>
+            {% if item.available %}
+              <span class="badge available">доступна</span>
+            {% else %}
+              <span class="badge unavailable">недоступна</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="empty">Вам пока не передавали роли.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
