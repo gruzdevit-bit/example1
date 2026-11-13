@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Замещения{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="mark">З</span>Единый портал<span class="sub">Замещения</span></div>
+  <div class="top-right">
+    {% if current_user %}
+      <span class="user"><span class="avatar">{{ current_user.full_name[:1] }}</span>{{ current_user.full_name }}</span>
+      <form method="post" action="/logout" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn ghost">Выйти</button>
+      </form>
+    {% else %}
+      <a class="btn ghost" href="/login">Войти</a>
+    {% endif %}
+  </div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-title">Рабочее пространство</div>
+    <a class="nav-item {% if request.url.path == '/substitutions' %}active{% endif %}" href="/substitutions">Мои замещения</a>
+    <a class="nav-item {% if request.url.path == '/delegated' %}active{% endif %}" href="/delegated">Я замещаю</a>
+    <div class="nav-title">Администрирование</div>
+    <a class="nav-item {% if request.url.path == '/users' %}active{% endif %}" href="/users">Пользователи</a>
+    <a class="nav-item {% if request.url.path == '/substitutions/new' %}active{% endif %}" href="/substitutions/new">Настроить замещение</a>
+  </aside>
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

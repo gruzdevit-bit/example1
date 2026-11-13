@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Новое замещение{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Настроить замещение</h1>
+    <p class="hint">Укажите период, отметьте свои роли и выберите заместителей для каждой роли.</p>
+  </div>
+</div>
+
+{% if errors %}
+  <div class="error-box">
+    <ul>
+      {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post" action="/substitutions" id="substitution-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+  <section class="card pad form-section">
+    <h2>Период отсутствия</h2>
+    <p class="hint">Период включает дату окончания: в последний день доступ сохраняется, затем роль возвращается автоматически.</p>
+    <div class="field-row">
+      <label class="field">С даты
+        <input type="date" id="date_from" name="date_from" value="{{ form.date_from }}" required>
+      </label>
+      <label class="field">По дату
+        <input type="date" id="date_to" name="date_to" value="{{ form.date_to }}" required>
+      </label>
+    </div>
+  </section>
+
+  <section class="card pad form-section">
+    <h2>Роли и заместители</h2>
+    <p class="hint">У вас доступно ролей: {{ roles|length }}. Непереданные роли останутся у вас на весь период. На одну роль можно назначить нескольких заместителей.</p>
+    {% for role in roles %}
+      {% set chosen = selected_deputies.get(role.id|string, []) %}
+      <div class="role-block">
+        <h3>
+          <label class="check-label">
+            <input type="checkbox" id="role_{{ role.id }}" name="role_ids" value="{{ role.id }}" {% if role.id|string in selected_roles %}checked{% endif %}>
+            Передать роль {{ role.name }}
+          </label>
+        </h3>
+        <div class="role-note">{{ role.description }}</div>
+        <div class="deputies">
+          <div class="deputies-title">Заместители для роли {{ role.name }}</div>
+          <div class="check-row">
+            {% for deputy in users %}
+              <label class="check-label">
+                <input type="checkbox" id="deputy_{{ role.id }}_{{ deputy.id }}" name="deputies_{{ role.id }}" value="{{ deputy.id }}" {% if deputy.id|string in chosen %}checked{% endif %}>
+                {{ deputy.full_name }}{% if deputy.email %} · {{ deputy.email }}{% endif %}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="empty">У вас нет ролей, передавать нечего.</div>
+    {% endfor %}
+  </section>
+
+  <div class="actions">
+    <a class="btn" href="/substitutions">Отмена</a>
+    <button type="submit" class="btn primary" id="submit-substitution">Сохранить</button>
+  </div>
+</form>
+{% endblock %}

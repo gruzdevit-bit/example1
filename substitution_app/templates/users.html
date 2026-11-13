@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Пользователи</h1>
+    <p class="hint">Создавайте пользователей и назначайте им одну или несколько ролей.</p>
+  </div>
+</div>
+
+{% if flash %}<div class="flash">{{ flash }}</div>{% endif %}
+{% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+
+<section class="card pad form-section">
+  <h2>Новый пользователь</h2>
+  <form method="post" action="/users">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="field-row">
+      <label class="field">ФИО
+        <input type="text" id="full_name" name="full_name" required placeholder="Иванов Иван Иванович">
+      </label>
+      <label class="field">E-mail (необязательно)
+        <input type="email" id="email" name="email" placeholder="ivanov@example.com">
+      </label>
+    </div>
+    <div class="actions">
+      <span></span>
+      <button type="submit" class="btn primary" id="create-user">Создать пользователя</button>
+    </div>
+  </form>
+</section>
+
+<section class="card pad form-section">
+  <h2>Новая роль</h2>
+  <form method="post" action="/roles">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="field-row">
+      <label class="field">Название роли
+        <input type="text" id="role_name" name="name" required placeholder="Например, Р4">
+      </label>
+      <label class="field">Описание (необязательно)
+        <input type="text" id="role_description" name="description" placeholder="Что даёт роль">
+      </label>
+    </div>
+    <div class="actions">
+      <span></span>
+      <button type="submit" class="btn primary" id="create-role">Создать роль</button>
+    </div>
+  </form>
+</section>
+
+<div class="section-title"><h2>Список пользователей</h2></div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Пользователь</th><th>E-mail</th><th>Роли</th><th>Назначить роли</th></tr></thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td><div class="role">{{ user.full_name }}</div></td>
+          <td>{{ user.email or '—' }}</td>
+          <td>
+            <div class="people">
+              {% for role in user.roles %}
+                <span class="chip">{{ role.name }}</span>
+              {% else %}
+                <span class="role-note">нет ролей</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            <form method="post" action="/users/{{ user.id }}/roles">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <div class="check-row">
+                {% for role in roles %}
+                  <label class="check-label">
+                    <input type="checkbox" id="user-{{ user.id }}-role-{{ role.id }}" name="role_ids" value="{{ role.id }}" {% if role.id in user.roles|map(attribute='id')|list %}checked{% endif %}>
+                    {{ role.name }}
+                  </label>
+                {% endfor %}
+              </div>
+              <button type="submit" class="btn small" id="assign-{{ user.id }}">Сохранить роли</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Карточка замещения{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Карточка замещения</h1>
+    <p class="hint">Роль, заместитель, период и история по этой роли.</p>
+  </div>
+  <a class="btn" href="/substitutions">К списку</a>
+</div>
+
+<div class="card pad form-section">
+  <dl class="details">
+    <dt>Роль</dt><dd>{{ item.role_name }}<div class="role-note">{{ item.role_description }}</div></dd>
+    <dt>Владелец</dt><dd>{{ item.owner_name }}</dd>
+    <dt>Заместитель</dt><dd>{{ item.deputy_name }}</dd>
+    <dt>Период</dt><dd>{{ format_date(item.date_from) }} — {{ format_date(item.date_to) }}</dd>
+    <dt>Статус</dt><dd><span class="badge {{ status_class(item.status) }}">{{ item.status }}</span></dd>
+    {% if item.revoked_at %}<dt>Отозвано</dt><dd>{{ format_date(item.revoked_at) }}</dd>{% endif %}
+    <dt>Создано</dt><dd>{{ format_date(item.created_at) }}</dd>
+  </dl>
+
+  {% if is_owner and item.status in ('запланировано', 'активно') %}
+    <div class="foot-actions">
+      <form method="post" action="/substitutions/{{ item.id }}/revoke" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn danger" id="revoke-sub-{{ item.id }}">Отозвать заместителя</button>
+      </form>
+      <form method="post" action="/roles/{{ item.role_id }}/revoke" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn danger" id="revoke-role-{{ item.role_id }}">Отозвать роль целиком</button>
+      </form>
+    </div>
+  {% endif %}
+</div>
+
+<div class="section-title"><h2>История по роли</h2></div>
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Заместитель</th><th>Период</th><th>Статус</th></tr></thead>
+    <tbody>
+      {% for entry in history %}
+        <tr>
+          <td>{{ entry.deputy_name }}</td>
+          <td>{{ format_date(entry.date_from) }} — {{ format_date(entry.date_to) }}</td>
+          <td><span class="badge {{ status_class(entry.status) }}">{{ entry.status }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="empty">Истории нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

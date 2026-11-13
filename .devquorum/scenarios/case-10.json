@@ -1,0 +1,25 @@
+{
+  "case": 10,
+  "title": "Замещение на будущий период запланировано",
+  "steps": [
+    {"open": "/login"},
+    {"select": "#user_id", "value": "1"},
+    {"click": "#login-submit"},
+    {"open": "/substitutions/new"},
+    {"fill": "#date_from", "value": "2099-01-01"},
+    {"fill": "#date_to", "value": "2099-12-31"},
+    {"check": "#role_1"},
+    {"check": "#deputy_1_2"},
+    {"click": "#submit-substitution"},
+    {"expect_text": "Замещение сохранено."},
+    {"expect_text": "запланировано"},
+    {"expect_text": "доступна"},
+    {"open": "/login"},
+    {"select": "#user_id", "value": "2"},
+    {"click": "#login-submit"},
+    {"open": "/delegated"},
+    {"expect_text": "Р1"},
+    {"expect_text": "запланировано"},
+    {"expect_text": "недоступна"}
+  ]
+}
